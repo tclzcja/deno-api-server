@@ -1,0 +1,6 @@
+{
+    "lock": false,
+    "name": "@tclzcja/deno-api-server",
+    "version": "0.0.1",
+    "exports": "./mod.js"
+}
