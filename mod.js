@@ -160,7 +160,7 @@ export class Router {
                 if (e instanceof CustomError) {
                     return new Response(e.message, {
                         status: e.httpStatusCode,
-                        headers: Object.assign(DEFAULT_HEADERS, {
+                        headers: Object.assign(Router.#DEFAULT_HEADERS, {
                             "Content-Type": "text/plain",
                         }),
                     });
