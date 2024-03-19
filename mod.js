@@ -148,7 +148,7 @@ export class Router {
                 }
 
                 if (Router.#ROUTER_MAP[path][req.method].sign && Router.#AUTH_SIGN) {
-                    await Router.#AUTH_SIGN(response, result);
+                    await Router.#AUTH_SIGN(response, user ?? result);
                 }
 
                 return response;
