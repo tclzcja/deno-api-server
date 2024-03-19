@@ -24,12 +24,12 @@ export class Router {
 
     static #ROUTER_MAP = {};
 
-    static Route(path, method, handler, { verify, login } = {}) {
+    static Route(path, method, handler, { verify, sign } = {}) {
         Router.#ROUTER_MAP[path] = Router.#ROUTER_MAP[path] ?? {};
         Router.#ROUTER_MAP[path][method] = {
             handler,
             verify,
-            login
+            sign
         };
     }
 
@@ -147,11 +147,7 @@ export class Router {
                         throw new Error("Return type of controller has no defined processor");
                 }
 
-                if (Router.#ROUTER_MAP[path][req.method].verify && Router.#AUTH_SIGN) {
-                    await Router.#AUTH_SIGN(response, user);
-                }
-
-                if (Router.#ROUTER_MAP[path][req.method].login && Router.#AUTH_SIGN) {
+                if (Router.#ROUTER_MAP[path][req.method].sign && Router.#AUTH_SIGN) {
                     await Router.#AUTH_SIGN(response, result);
                 }
 
