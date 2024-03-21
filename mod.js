@@ -20,7 +20,7 @@ export class Router {
 
     static #ROUTER_MAP = {};
 
-    static Route(path, method, handler, { verify, sign, raw } = {}) {
+    static Route(path, method, handler, { verify, sign, login, raw } = {}) {
 
         if (verify && typeof verify !== 'function') {
             throw new Error(`The "verify" option must be a function`);
@@ -28,6 +28,10 @@ export class Router {
 
         if (sign && typeof sign !== 'function') {
             throw new Error(`The "sign" option must be a function`);
+        }
+
+        if (login && typeof login !== 'function') {
+            throw new Error(`The "login" option must be a function`);
         }
 
         Router.#ROUTER_MAP[path] = Router.#ROUTER_MAP[path] ?? {};
