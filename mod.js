@@ -155,7 +155,7 @@ export class Router {
                 }
 
                 if (Router.#ROUTER_MAP[path][req.method].login) {
-                    await Router.#ROUTER_MAP[path][req.method].sign(response, result);
+                    await Router.#ROUTER_MAP[path][req.method].login(response, result);
                 }
 
                 return response;
