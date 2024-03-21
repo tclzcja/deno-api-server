@@ -35,6 +35,7 @@ export class Router {
             handler,
             verify,
             sign,
+            login,
             raw
         };
     }
@@ -150,7 +151,11 @@ export class Router {
                 }
 
                 if (Router.#ROUTER_MAP[path][req.method].sign) {
-                    await Router.#ROUTER_MAP[path][req.method].sign(response, user ?? result);
+                    await Router.#ROUTER_MAP[path][req.method].sign(response, user);
+                }
+
+                if (Router.#ROUTER_MAP[path][req.method].login) {
+                    await Router.#ROUTER_MAP[path][req.method].sign(response, result);
                 }
 
                 return response;
