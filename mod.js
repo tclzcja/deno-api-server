@@ -12,11 +12,9 @@ export class CustomError extends Error {
 export class Router {
     static #DEFAULT_HEADERS = {
         "Access-Control-Allow-Origin": '*',
-        "Access-Control-Allow-Headers": "Origin, Referer, Content-Type, Content-SHA256, Content-Filename, Content-Duration, Accept, Authorization, User-Agent, Cache-Control, X-Api-Key",
-        "Access-Control-Allow-Methods": "GET, OPTION, POST, PUT, DELETE, PATCH, TEST",
-        "Access-Control-Expose-Headers": "Authorization, Content-SHA256",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "*",
         "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Max-Age": "300",
     };
     static #API_PREFIX = undefined;
     static #AUTH_VERIFY = undefined;
