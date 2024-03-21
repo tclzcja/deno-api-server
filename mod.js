@@ -74,7 +74,7 @@ export class Router {
                 const responseStatus = req.method === "POST" ? 201 : 200;
 
                 if (Router.#ROUTER_MAP[path][req.method].verify) {
-                    user = Router.#ROUTER_MAP[path][req.method].verify(req);
+                    user = await Router.#ROUTER_MAP[path][req.method].verify(req);
                 }
 
                 if (req.method === "GET") {
