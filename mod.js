@@ -17,32 +17,36 @@ export class Router {
         "Access-Control-Allow-Credentials": "true",
     };
     static #API_PREFIX = undefined;
-    static #AUTH_VERIFY = undefined;
-    static #AUTH_SIGN = undefined;
 
     static #ROUTER_MAP = {};
 
-    static Route(path, method, handler, { verify, sign } = {}) {
+    static Route(path, method, handler, { verify, sign, raw } = {}) {
+
+        if (verify && typeof verify !== 'function') {
+            throw new Error(`The "verify" option must be a function`);
+        }
+
+        if (sign && typeof sign !== 'function') {
+            throw new Error(`The "sign" option must be a function`);
+        }
+
         Router.#ROUTER_MAP[path] = Router.#ROUTER_MAP[path] ?? {};
         Router.#ROUTER_MAP[path][method] = {
             handler,
             verify,
-            sign
+            sign,
+            raw
         };
     }
 
     static Run({
         port = 8000,
-        auth_verify,
-        auth_sign,
         default_headers,
         api_prefix
     } = {}
     ) {
         Router.#DEFAULT_HEADERS = default_headers ?? Router.#DEFAULT_HEADERS;
         Router.#API_PREFIX = api_prefix ?? Router.#API_PREFIX;
-        Router.#AUTH_VERIFY = auth_verify ?? Router.#AUTH_VERIFY;
-        Router.#AUTH_SIGN = auth_sign ?? Router.#AUTH_SIGN;
 
         Deno.serve({ port }, async (req) => {
 
@@ -69,8 +73,8 @@ export class Router {
                 const responseHeaders = structuredClone(Router.#DEFAULT_HEADERS);
                 const responseStatus = req.method === "POST" ? 201 : 200;
 
-                if (Router.#ROUTER_MAP[path][req.method].verify && Router.#AUTH_VERIFY) {
-                    user = await Router.#AUTH_VERIFY(req);
+                if (Router.#ROUTER_MAP[path][req.method].verify) {
+                    user = Router.#ROUTER_MAP[path][req.method].verify(req);
                 }
 
                 if (req.method === "GET") {
@@ -145,8 +149,8 @@ export class Router {
                         throw new Error("Return type of controller has no defined processor");
                 }
 
-                if (Router.#ROUTER_MAP[path][req.method].sign && Router.#AUTH_SIGN) {
-                    await Router.#AUTH_SIGN(response, user ?? result);
+                if (Router.#ROUTER_MAP[path][req.method].sign) {
+                    await Router.#ROUTER_MAP[path][req.method].sign(response, user ?? result);
                 }
 
                 return response;
