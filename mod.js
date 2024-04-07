@@ -73,18 +73,18 @@ export class Router {
 
             try {
                 let result = null;
-                let user = null;
+                let payload = null;
 
                 const responseHeaders = structuredClone(Router.#DEFAULT_HEADERS);
                 const responseStatus = req.method === "POST" ? 201 : 200;
 
                 if (Router.#ROUTER_MAP[path][req.method].verify) {
-                    user = await Router.#ROUTER_MAP[path][req.method].verify(req);
+                    payload = await Router.#ROUTER_MAP[path][req.method].verify(req);
                 }
 
                 if (req.method === "GET") {
                     const params = new URL(req.url).searchParams;
-                    result = await Router.#ROUTER_MAP[path][req.method].handler(Object.fromEntries(params), user, req);
+                    result = await Router.#ROUTER_MAP[path][req.method].handler(Object.fromEntries(params), { payload, req });
                 } else {
                     switch (req.headers.get("content-type")) {
                         case "application/json": {
@@ -94,7 +94,7 @@ export class Router {
                             } catch {
                                 throw new CustomError("Request body is not a valid JSON", 400);
                             }
-                            result = await Router.#ROUTER_MAP[path][req.method].handler(body, user, req);
+                            result = await Router.#ROUTER_MAP[path][req.method].handler(body, { payload, req });
                             break;
                         }
                         case "text/plain": {
@@ -104,7 +104,7 @@ export class Router {
                             } catch {
                                 throw new CustomError("Request body is not a valid STRING", 400);
                             }
-                            result = await Router.#ROUTER_MAP[path][req.method].handler(text, user, req);
+                            result = await Router.#ROUTER_MAP[path][req.method].handler(text, { payload, req });
                             break;
                         }
                         case "multipart/form-data": {
@@ -114,11 +114,11 @@ export class Router {
                             } catch {
                                 throw new CustomError("Request body is not a valid FORMDATA", 400);
                             }
-                            result = await Router.#ROUTER_MAP[path][req.method].handler(formdata, user, req);
+                            result = await Router.#ROUTER_MAP[path][req.method].handler(formdata, { payload, req });
                             break;
                         }
                         default: {
-                            result = await Router.#ROUTER_MAP[path][req.method].handler(req, user, req);
+                            result = await Router.#ROUTER_MAP[path][req.method].handler(req, { payload, req });
                             break;
                         }
                     }
@@ -155,7 +155,7 @@ export class Router {
                 }
 
                 if (Router.#ROUTER_MAP[path][req.method].sign) {
-                    await Router.#ROUTER_MAP[path][req.method].sign(response, user);
+                    await Router.#ROUTER_MAP[path][req.method].sign(response, payload);
                 }
 
                 if (Router.#ROUTER_MAP[path][req.method].login) {
